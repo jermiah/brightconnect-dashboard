@@ -73,6 +73,9 @@ async function loadAccounts() {
   `).join('')
 }
 
+// Store tickets data for details modal
+let ticketsData = []
+
 // Load Tickets
 async function loadTickets() {
   const { data, error } = await supabase
@@ -83,21 +86,24 @@ async function loadTickets() {
 
   if (error) { console.error('Error:', error); return }
 
+  ticketsData = data
   const tbody = document.getElementById('ticketsTable')
   const openCount = data.filter(t => t.status === 'open').length
   document.getElementById('openTickets').textContent = openCount
 
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No tickets yet</td></tr>'
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tickets yet</td></tr>'
     return
   }
 
   tbody.innerHTML = data.map(t => `
     <tr>
       <td><strong>${t.ticket_id}</strong></td>
+      <td>${t.phone_number || '-'}</td>
       <td>${t.customer_name}</td>
       <td>${t.issue_type?.replace('_', ' ') || '-'}</td>
       <td><span class="priority ${t.priority}">${t.priority}</span></td>
+      <td><button class="btn view" onclick="viewTicketDetails('${t.ticket_id}')">View</button></td>
     </tr>
   `).join('')
 }
@@ -118,7 +124,7 @@ async function loadNotifications() {
   document.getElementById('notifBadge').textContent = `${pendingCount} pending`
 
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No notifications</td></tr>'
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No notifications</td></tr>'
     return
   }
 
@@ -128,6 +134,7 @@ async function loadNotifications() {
       <td>${n.zip_code}</td>
       <td><span class="status ${n.notified ? 'notified' : 'waiting'}">${n.notified ? 'Sent' : 'Waiting'}</span></td>
       <td class="timestamp">${new Date(n.created_at).toLocaleString()}</td>
+      <td><button class="btn edit" onclick="editNotification(${n.id}, '${n.phone_number}', '${n.zip_code}', ${n.notified})">Edit</button></td>
     </tr>
   `).join('')
 }
@@ -283,6 +290,60 @@ window.submitAccount = async function(e) {
 
   closeModal('accountModal')
   loadAccounts()
+}
+
+// View Ticket Details
+window.viewTicketDetails = function(ticketId) {
+  const ticket = ticketsData.find(t => t.ticket_id === ticketId)
+  if (!ticket) return
+
+  document.getElementById('ticketModalTitle').textContent = `Ticket ${ticket.ticket_id}`
+  document.getElementById('detailTicketId').textContent = ticket.ticket_id
+  document.getElementById('detailCustomer').textContent = ticket.customer_name || '-'
+  document.getElementById('detailPhone').textContent = ticket.phone_number || '-'
+  document.getElementById('detailEmail').textContent = ticket.email || '-'
+  document.getElementById('detailIssue').textContent = ticket.issue_type?.replace('_', ' ') || '-'
+  document.getElementById('detailPriority').innerHTML = `<span class="priority ${ticket.priority}">${ticket.priority}</span>`
+  document.getElementById('detailStatus').innerHTML = `<span class="status ${ticket.status}">${ticket.status}</span>`
+  document.getElementById('detailDescription').textContent = ticket.description || 'No description provided'
+  document.getElementById('detailCreated').textContent = new Date(ticket.created_at).toLocaleString()
+
+  document.getElementById('ticketModal').classList.add('active')
+}
+
+window.closeTicketModal = function() {
+  document.getElementById('ticketModal').classList.remove('active')
+}
+
+// Edit Notification
+window.editNotification = function(id, phoneNumber, zipCode, notified) {
+  document.querySelector('#notificationForm input[name="id"]').value = id
+  document.querySelector('#notificationForm input[name="phone_number"]').value = phoneNumber
+  document.querySelector('#notificationForm input[name="zip_code"]').value = zipCode
+  document.querySelector('#notificationForm select[name="notified"]').value = notified.toString()
+  openModal('notificationModal')
+}
+
+// Submit Notification (Update)
+window.submitNotification = async function(e) {
+  e.preventDefault()
+  const form = e.target
+  const formData = new FormData(form)
+  const id = formData.get('id')
+
+  const notificationData = {
+    notified: formData.get('notified') === 'true'
+  }
+
+  const { error } = await supabase.from('outage_notifications').update(notificationData).eq('id', id)
+
+  if (error) {
+    alert('Error updating notification: ' + error.message)
+    return
+  }
+
+  closeModal('notificationModal')
+  loadNotifications()
 }
 
 // Real-time subscriptions
