@@ -5,6 +5,18 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
+// Load all data
+async function loadData() {
+  await Promise.all([
+    loadOutages(),
+    loadAccounts(),
+    loadTickets(),
+    loadNotifications(),
+    loadPaymentLinks()
+  ])
+}
+
+// Load Outages
 async function loadOutages() {
   const { data, error } = await supabase
     .from('outages')
@@ -32,6 +44,34 @@ async function loadOutages() {
   `).join('')
 }
 
+// Load Accounts
+async function loadAccounts() {
+  const { data, error } = await supabase
+    .from('accounts')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('Error:', error); return }
+
+  const tbody = document.getElementById('accountsTable')
+  document.getElementById('totalAccounts').textContent = data.length
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No accounts - add one!</td></tr>'
+    return
+  }
+
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td>${a.account_phone}</td>
+      <td>${a.customer_name}</td>
+      <td><strong>$${parseFloat(a.balance).toFixed(2)}</strong></td>
+      <td>${a.due_date || '-'}</td>
+    </tr>
+  `).join('')
+}
+
+// Load Tickets
 async function loadTickets() {
   const { data, error } = await supabase
     .from('support_tickets')
@@ -46,7 +86,7 @@ async function loadTickets() {
   document.getElementById('openTickets').textContent = openCount
 
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No tickets yet - make a test call!</td></tr>'
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No tickets yet</td></tr>'
     return
   }
 
@@ -54,13 +94,13 @@ async function loadTickets() {
     <tr>
       <td><strong>${t.ticket_id}</strong></td>
       <td>${t.customer_name}</td>
-      <td>${t.issue_type.replace('_', ' ')}</td>
+      <td>${t.issue_type?.replace('_', ' ') || '-'}</td>
       <td><span class="priority ${t.priority}">${t.priority}</span></td>
-      <td><span class="status ${t.status}">${t.status}</span></td>
     </tr>
   `).join('')
 }
 
+// Load Notifications
 async function loadNotifications() {
   const { data, error } = await supabase
     .from('outage_notifications')
@@ -75,12 +115,8 @@ async function loadNotifications() {
   document.getElementById('pendingNotifications').textContent = pendingCount
   document.getElementById('notifBadge').textContent = `${pendingCount} pending`
 
-  const total = (parseInt(document.getElementById('openTickets').textContent) || 0) +
-               (parseInt(document.getElementById('pendingNotifications').textContent) || 0)
-  document.getElementById('totalCalls').textContent = total
-
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No notifications yet</td></tr>'
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No notifications</td></tr>'
     return
   }
 
@@ -94,18 +130,99 @@ async function loadNotifications() {
   `).join('')
 }
 
-async function loadData() {
-  await Promise.all([loadOutages(), loadTickets(), loadNotifications()])
+// Load Payment Links
+async function loadPaymentLinks() {
+  const { data, error } = await supabase
+    .from('payment_links')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  if (error) { console.error('Error:', error); return }
+
+  const tbody = document.getElementById('paymentLinksTable')
+  document.getElementById('paymentLinks').textContent = data.length
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No payment links</td></tr>'
+    return
+  }
+
+  tbody.innerHTML = data.map(p => `
+    <tr>
+      <td>${p.account_phone}</td>
+      <td><span class="status ${p.delivery_method}">${p.delivery_method.toUpperCase()}</span></td>
+      <td>${p.sent_to}</td>
+      <td><strong>${p.confirmation_code}</strong></td>
+    </tr>
+  `).join('')
+}
+
+// Modal functions
+window.openModal = function(id) {
+  document.getElementById(id).classList.add('active')
+}
+
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('active')
+  document.getElementById(id).querySelector('form').reset()
+}
+
+// Submit Outage
+window.submitOutage = async function(e) {
+  e.preventDefault()
+  const form = e.target
+  const formData = new FormData(form)
+
+  const { error } = await supabase.from('outages').insert({
+    zip_code: formData.get('zip_code'),
+    active: formData.get('active') === 'true',
+    estimated_resolution: formData.get('estimated_resolution') || null,
+    reason: formData.get('reason') || null
+  })
+
+  if (error) {
+    alert('Error adding outage: ' + error.message)
+    return
+  }
+
+  closeModal('outageModal')
+  loadOutages()
+}
+
+// Submit Account
+window.submitAccount = async function(e) {
+  e.preventDefault()
+  const form = e.target
+  const formData = new FormData(form)
+
+  const { error } = await supabase.from('accounts').insert({
+    account_phone: formData.get('account_phone').replace(/\D/g, ''),
+    customer_name: formData.get('customer_name'),
+    balance: parseFloat(formData.get('balance')),
+    due_date: formData.get('due_date'),
+    email: formData.get('email') || null
+  })
+
+  if (error) {
+    alert('Error adding account: ' + error.message)
+    return
+  }
+
+  closeModal('accountModal')
+  loadAccounts()
 }
 
 // Real-time subscriptions
-supabase.channel('changes')
+supabase.channel('all-changes')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'outages' }, loadOutages)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts' }, loadAccounts)
   .on('postgres_changes', { event: '*', schema: 'public', table: 'support_tickets' }, loadTickets)
   .on('postgres_changes', { event: '*', schema: 'public', table: 'outage_notifications' }, loadNotifications)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'payment_links' }, loadPaymentLinks)
   .subscribe()
 
 // Initialize
 window.loadData = loadData
 loadData()
-setInterval(loadData, 10000)
+setInterval(loadData, 15000)
