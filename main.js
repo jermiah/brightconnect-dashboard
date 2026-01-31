@@ -359,3 +359,58 @@ supabase.channel('all-changes')
 window.loadData = loadData
 loadData()
 setInterval(loadData, 15000)
+
+// Vapi Voice Assistant
+const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY
+const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID
+
+let vapiInstance = null
+let isCallActive = false
+
+window.toggleVapiCall = async function() {
+  const button = document.getElementById('vapiButton')
+  const icon = document.getElementById('vapiIcon')
+  const text = document.getElementById('vapiText')
+
+  if (!isCallActive) {
+    try {
+      if (!vapiInstance) {
+        vapiInstance = new Vapi(VAPI_PUBLIC_KEY)
+
+        vapiInstance.on('call-start', () => {
+          console.log('Call started')
+          isCallActive = true
+          button.classList.add('active')
+          icon.textContent = '📵'
+          text.textContent = 'End Call'
+        })
+
+        vapiInstance.on('call-end', () => {
+          console.log('Call ended')
+          isCallActive = false
+          button.classList.remove('active')
+          icon.textContent = '📞'
+          text.textContent = 'Call Assistant'
+        })
+
+        vapiInstance.on('error', (error) => {
+          console.error('Vapi error:', error)
+          alert('Call error: ' + error.message)
+          isCallActive = false
+          button.classList.remove('active')
+          icon.textContent = '📞'
+          text.textContent = 'Call Assistant'
+        })
+      }
+
+      await vapiInstance.start(VAPI_ASSISTANT_ID)
+    } catch (error) {
+      console.error('Failed to start call:', error)
+      alert('Failed to start call. Check console for details.')
+    }
+  } else {
+    if (vapiInstance) {
+      vapiInstance.stop()
+    }
+  }
+}
