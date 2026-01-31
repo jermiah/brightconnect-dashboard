@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrightConnect - Admin Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; color: #00d4aa; margin-bottom: 5px; }
+        .header p { color: #888; font-size: 1rem; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; max-width: 1400px; margin: 0 auto 20px; }
+        .stat-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #00d4aa; }
+        .stat-label { color: #888; font-size: 0.85rem; margin-top: 5px; }
+        .stat-card.alert .stat-number { color: #ff6b6b; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .card-title { font-size: 1.2rem; color: #00d4aa; display: flex; align-items: center; gap: 10px; }
+        .card-title .icon { font-size: 1.5rem; }
+        .badge { background: #00d4aa; color: #1a1a2e; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .badge.pending { background: #ffd93d; color: #1a1a2e; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { color: #888; font-weight: 500; text-transform: uppercase; font-size: 0.75rem; }
+        td { color: #ddd; }
+        tr:hover { background: rgba(255,255,255,0.03); }
+        .status { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+        .status.active { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .status.resolved { background: rgba(0,212,170,0.2); color: #00d4aa; }
+        .status.open { background: rgba(255,217,61,0.2); color: #ffd93d; }
+        .status.waiting { background: rgba(100,149,237,0.2); color: #6495ed; }
+        .status.notified { background: rgba(0,212,170,0.2); color: #00d4aa; }
+        .priority { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+        .priority.high { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .priority.medium { background: rgba(255,217,61,0.2); color: #ffd93d; }
+        .priority.low { background: rgba(0,212,170,0.2); color: #00d4aa; }
+        .refresh-btn { background: #00d4aa; color: #1a1a2e; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .refresh-btn:hover { background: #00b894; }
+        .empty-state { text-align: center; padding: 30px; color: #666; }
+        .live-indicator { display: flex; align-items: center; gap: 8px; color: #00d4aa; font-size: 0.85rem; }
+        .live-dot { width: 8px; height: 8px; background: #00d4aa; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .timestamp { font-size: 0.8rem; color: #666; }
+        @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } .dashboard { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>BrightConnect Admin</h1>
+        <p>Real-time Voice Assistant Dashboard</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card alert">
+            <div class="stat-number" id="activeOutages">0</div>
+            <div class="stat-label">Active Outages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="openTickets">0</div>
+            <div class="stat-label">Open Tickets</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="pendingNotifications">0</div>
+            <div class="stat-label">Pending Notifications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalCalls">0</div>
+            <div class="stat-label">Total Records</div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="icon">⚡</span> Service Outages</div>
+                <div class="live-indicator"><div class="live-dot"></div> Live</div>
+            </div>
+            <table>
+                <thead><tr><th>ZIP Code</th><th>Status</th><th>Est. Resolution</th><th>Reason</th></tr></thead>
+                <tbody id="outagesTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="icon">🎫</span> Support Tickets</div>
+                <button class="refresh-btn" onclick="window.loadData()">Refresh</button>
+            </div>
+            <table>
+                <thead><tr><th>Ticket ID</th><th>Customer</th><th>Issue</th><th>Priority</th><th>Status</th></tr></thead>
+                <tbody id="ticketsTable"><tr><td colspan="5" class="empty-state">Loading...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span class="icon">📱</span> SMS Notifications Queue</div>
+                <span class="badge pending" id="notifBadge">0 pending</span>
+            </div>
+            <table>
+                <thead><tr><th>Phone Number</th><th>ZIP Code</th><th>Status</th><th>Created</th></tr></thead>
+                <tbody id="notificationsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
