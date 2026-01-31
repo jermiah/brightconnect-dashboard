@@ -10,6 +10,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "@vapi-ai/web": "^2.2.5"
   }
 }
