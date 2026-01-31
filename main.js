@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import Vapi from '@vapi-ai/web'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
