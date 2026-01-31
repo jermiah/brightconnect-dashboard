@@ -332,6 +332,107 @@
         </div>
     </div>
 
+    <!-- Vapi Voice Assistant Button -->
+    <button id="vapiButton" class="vapi-button" onclick="toggleVapiCall()">
+        <span id="vapiIcon">📞</span>
+        <span id="vapiText">Call Assistant</span>
+    </button>
+
+    <style>
+        .vapi-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 212, 170, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .vapi-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 212, 170, 0.5);
+        }
+        .vapi-button.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+        }
+        .vapi-button.active:hover {
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.5);
+        }
+        #vapiIcon { font-size: 1.2rem; }
+    </style>
+
+    <!-- Vapi Web SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/dist/vapi.min.js"></script>
+    <script>
+        // Vapi credentials
+        const VAPI_PUBLIC_KEY = 'e9823c56-fa0f-48ac-9006-803f19fd3ada';
+        const VAPI_ASSISTANT_ID = 'a23325e6-3206-4242-b9a3-f55e1b16bf77';
+
+        let vapiInstance = null;
+        let isCallActive = false;
+
+        async function toggleVapiCall() {
+            const button = document.getElementById('vapiButton');
+            const icon = document.getElementById('vapiIcon');
+            const text = document.getElementById('vapiText');
+
+            if (!isCallActive) {
+                // Start call
+                try {
+                    if (!vapiInstance) {
+                        vapiInstance = new Vapi(VAPI_PUBLIC_KEY);
+
+                        vapiInstance.on('call-start', () => {
+                            console.log('Call started');
+                            isCallActive = true;
+                            button.classList.add('active');
+                            icon.textContent = '📵';
+                            text.textContent = 'End Call';
+                        });
+
+                        vapiInstance.on('call-end', () => {
+                            console.log('Call ended');
+                            isCallActive = false;
+                            button.classList.remove('active');
+                            icon.textContent = '📞';
+                            text.textContent = 'Call Assistant';
+                        });
+
+                        vapiInstance.on('error', (error) => {
+                            console.error('Vapi error:', error);
+                            alert('Call error: ' + error.message);
+                            isCallActive = false;
+                            button.classList.remove('active');
+                            icon.textContent = '📞';
+                            text.textContent = 'Call Assistant';
+                        });
+                    }
+
+                    await vapiInstance.start(VAPI_ASSISTANT_ID);
+                } catch (error) {
+                    console.error('Failed to start call:', error);
+                    alert('Failed to start call. Check console for details.');
+                }
+            } else {
+                // End call
+                if (vapiInstance) {
+                    vapiInstance.stop();
+                }
+            }
+        }
+    </script>
+
     <script type="module" src="/main.js"></script>
 </body>
 </html>
