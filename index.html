@@ -22,7 +22,12 @@
         .stat-label { color: #888; font-size: 0.85rem; margin-top: 5px; }
         .stat-card.alert .stat-number { color: #ff6b6b; }
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; max-width: 1600px; margin: 0 auto; }
-        .card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; }
+        .table-container { max-height: 220px; overflow-y: auto; }
+        .table-container::-webkit-scrollbar { width: 6px; }
+        .table-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+        .table-container::-webkit-scrollbar-thumb { background: rgba(0,212,170,0.5); border-radius: 3px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: rgba(0,212,170,0.8); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .card-title { font-size: 1.1rem; color: #00d4aa; display: flex; align-items: center; gap: 10px; }
         .card-title .icon { font-size: 1.3rem; }
@@ -30,7 +35,7 @@
         .badge.pending { background: #ffd93d; color: #1a1a2e; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { color: #888; font-weight: 500; text-transform: uppercase; font-size: 0.7rem; }
+        th { color: #888; font-weight: 500; text-transform: uppercase; font-size: 0.7rem; position: sticky; top: 0; background: #1a1a2e; z-index: 1; }
         td { color: #ddd; }
         tr:hover { background: rgba(255,255,255,0.03); }
         .status { padding: 3px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; }
@@ -49,6 +54,8 @@
         .btn.small { padding: 5px 10px; font-size: 0.75rem; }
         .btn.add { background: #6c5ce7; }
         .btn.add:hover { background: #5b4cdb; }
+        .btn.edit { background: #3498db; padding: 4px 8px; font-size: 0.7rem; }
+        .btn.edit:hover { background: #2980b9; }
         .empty-state { text-align: center; padding: 20px; color: #666; }
         .live-indicator { display: flex; align-items: center; gap: 8px; color: #00d4aa; font-size: 0.8rem; }
         .live-dot { width: 8px; height: 8px; background: #00d4aa; border-radius: 50%; animation: pulse 2s infinite; }
@@ -112,24 +119,28 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title"><span class="icon">⚡</span> Service Outages</div>
-                <button class="btn add small" onclick="openModal('outageModal')">+ Add Outage</button>
+                <button class="btn add small" onclick="openOutageModal()">+ Add Outage</button>
             </div>
-            <table>
-                <thead><tr><th>ZIP</th><th>Status</th><th>Resolution</th><th>Reason</th></tr></thead>
-                <tbody id="outagesTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>ZIP</th><th>Status</th><th>Resolution</th><th>Reason</th><th>Actions</th></tr></thead>
+                    <tbody id="outagesTable"><tr><td colspan="5" class="empty-state">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Accounts Card -->
         <div class="card">
             <div class="card-header">
                 <div class="card-title"><span class="icon">👤</span> Customer Accounts</div>
-                <button class="btn add small" onclick="openModal('accountModal')">+ Add Account</button>
+                <button class="btn add small" onclick="openAccountModal()">+ Add Account</button>
             </div>
-            <table>
-                <thead><tr><th>Phone</th><th>Name</th><th>Balance</th><th>Due Date</th></tr></thead>
-                <tbody id="accountsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Phone</th><th>Name</th><th>Balance</th><th>Due Date</th><th>Actions</th></tr></thead>
+                    <tbody id="accountsTable"><tr><td colspan="5" class="empty-state">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Support Tickets Card -->
@@ -138,10 +149,12 @@
                 <div class="card-title"><span class="icon">🎫</span> Support Tickets</div>
                 <div class="live-indicator"><div class="live-dot"></div> Live</div>
             </div>
-            <table>
-                <thead><tr><th>Ticket</th><th>Customer</th><th>Issue</th><th>Priority</th></tr></thead>
-                <tbody id="ticketsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Ticket</th><th>Customer</th><th>Issue</th><th>Priority</th></tr></thead>
+                    <tbody id="ticketsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- SMS Notifications Card -->
@@ -150,10 +163,12 @@
                 <div class="card-title"><span class="icon">📱</span> Outage SMS Queue</div>
                 <span class="badge pending" id="notifBadge">0 pending</span>
             </div>
-            <table>
-                <thead><tr><th>Phone</th><th>ZIP</th><th>Status</th><th>Created</th></tr></thead>
-                <tbody id="notificationsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Phone</th><th>ZIP</th><th>Status</th><th>Created</th></tr></thead>
+                    <tbody id="notificationsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Payment Links Card -->
@@ -162,21 +177,24 @@
                 <div class="card-title"><span class="icon">💳</span> Payment Links</div>
                 <button class="btn small" onclick="window.loadData()">Refresh</button>
             </div>
-            <table>
-                <thead><tr><th>Account</th><th>Method</th><th>Sent To</th><th>Code</th></tr></thead>
-                <tbody id="paymentLinksTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Account</th><th>Method</th><th>Sent To</th><th>Code</th></tr></thead>
+                    <tbody id="paymentLinksTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Add Outage Modal -->
+    <!-- Add/Edit Outage Modal -->
     <div class="modal" id="outageModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Add Service Outage</h2>
+                <h2 id="outageModalTitle">Add Service Outage</h2>
                 <button class="modal-close" onclick="closeModal('outageModal')">&times;</button>
             </div>
             <form id="outageForm" onsubmit="submitOutage(event)">
+                <input type="hidden" name="id" value="">
                 <div class="form-group">
                     <label>ZIP Code *</label>
                     <input type="text" name="zip_code" required placeholder="e.g., 94102">
@@ -200,20 +218,21 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn cancel" onclick="closeModal('outageModal')">Cancel</button>
-                    <button type="submit" class="btn">Add Outage</button>
+                    <button type="submit" class="btn" id="outageSubmitBtn">Add Outage</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add Account Modal -->
+    <!-- Add/Edit Account Modal -->
     <div class="modal" id="accountModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Add Customer Account</h2>
+                <h2 id="accountModalTitle">Add Customer Account</h2>
                 <button class="modal-close" onclick="closeModal('accountModal')">&times;</button>
             </div>
             <form id="accountForm" onsubmit="submitAccount(event)">
+                <input type="hidden" name="id" value="">
                 <div class="form-row">
                     <div class="form-group">
                         <label>Account Phone *</label>
@@ -240,7 +259,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn cancel" onclick="closeModal('accountModal')">Cancel</button>
-                    <button type="submit" class="btn">Add Account</button>
+                    <button type="submit" class="btn" id="accountSubmitBtn">Add Account</button>
                 </div>
             </form>
         </div>
