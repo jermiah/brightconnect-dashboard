@@ -146,7 +146,7 @@
             align-items: center;
             gap: 12px;
         }
-        .credits-link {
+        .credits-display {
             background: linear-gradient(135deg, #2d3436 0%, #1a1a2e 100%);
             border: 1px solid rgba(0, 212, 170, 0.3);
             padding: 10px 16px;
@@ -155,19 +155,11 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .credits-link:hover {
-            border-color: rgba(0, 212, 170, 0.6);
-            box-shadow: 0 4px 20px rgba(0, 212, 170, 0.2);
-            transform: translateY(-1px);
         }
         .credits-icon {
             font-size: 1rem;
         }
-        .credits-text {
+        .credits-amount {
             color: #00d4aa;
             font-weight: 600;
             font-size: 0.9rem;
@@ -756,10 +748,10 @@
 
     <!-- Top Right Button -->
     <div class="top-right-buttons">
-        <a href="https://dashboard.vapi.ai" target="_blank" class="credits-link" title="Check VAPI Credits">
+        <div class="credits-display" id="creditsDisplay">
             <span class="credits-icon">💰</span>
-            <span class="credits-text">VAPI Credits</span>
-        </a>
+            <span class="credits-amount" id="creditsAmount">--</span>
+        </div>
         <button class="qa-button" onclick="loadMarkdown(); openModal('qaModal')">
             <span>&#128218;</span> Assignment Q&A
         </button>

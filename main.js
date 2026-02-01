@@ -368,6 +368,28 @@ setInterval(loadData, 15000)
 const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY
 const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID
 
+// Fetch and display VAPI credits via serverless function
+async function loadVapiCredits() {
+  try {
+    const response = await fetch('/api/vapi-credits')
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch credits')
+    }
+
+    const data = await response.json()
+    const credits = data.credits || 0
+    document.getElementById('creditsAmount').textContent = `$${parseFloat(credits).toFixed(2)}`
+  } catch (error) {
+    console.error('Error fetching VAPI credits:', error)
+    document.getElementById('creditsAmount').textContent = 'N/A'
+  }
+}
+
+// Load credits on page load and refresh every 60 seconds
+loadVapiCredits()
+setInterval(loadVapiCredits, 60000)
+
 let vapiInstance = null
 let isCallActive = false
 
