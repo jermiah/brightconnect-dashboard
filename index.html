@@ -89,10 +89,15 @@
         .detail-description { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-top: 10px; color: #ddd; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
 
         /* Info Button Styles */
-        .info-button {
+        .top-buttons {
             position: fixed;
             top: 20px;
             left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 998;
+        }
+        .info-button, .flow-button {
             background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
             color: #fff;
             border: none;
@@ -106,13 +111,21 @@
             gap: 8px;
             box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
             transition: all 0.3s ease;
-            z-index: 998;
+        }
+        .flow-button {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4);
+        }
+        .info-button:hover, .flow-button:hover {
+            transform: translateY(-2px);
         }
         .info-button:hover {
-            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
         }
-        .info-button span:first-child {
+        .flow-button:hover {
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.5);
+        }
+        .info-button span:first-child, .flow-button span:first-child {
             background: rgba(255,255,255,0.2);
             width: 24px;
             height: 24px;
@@ -121,6 +134,186 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
+        }
+
+        /* Flowchart Modal Styles */
+        .flowchart-modal {
+            max-width: 950px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .flowchart-container {
+            padding: 20px;
+        }
+        .flow-section {
+            margin-bottom: 30px;
+        }
+        .flow-section-title {
+            color: #00d4aa;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0,212,170,0.3);
+        }
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .flow-node {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+            min-width: 200px;
+            max-width: 280px;
+            position: relative;
+        }
+        .flow-node.start {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            border-color: #6c5ce7;
+            color: #fff;
+        }
+        .flow-node.end {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            border-color: #00d4aa;
+            color: #1a1a2e;
+        }
+        .flow-node.decision {
+            background: rgba(255,217,61,0.1);
+            border-color: #ffd93d;
+            transform: rotate(0deg);
+            border-radius: 8px;
+        }
+        .flow-node.action {
+            background: rgba(52,152,219,0.1);
+            border-color: #3498db;
+        }
+        .flow-node.tool {
+            background: rgba(155,89,182,0.1);
+            border-color: #9b59b6;
+            font-size: 0.85rem;
+        }
+        .flow-node.error {
+            background: rgba(255,107,107,0.1);
+            border-color: #ff6b6b;
+        }
+        .flow-node-label {
+            font-size: 0.85rem;
+            color: #ddd;
+        }
+        .flow-node.start .flow-node-label,
+        .flow-node.end .flow-node-label {
+            color: inherit;
+            font-weight: 600;
+        }
+        .flow-arrow {
+            width: 2px;
+            height: 25px;
+            background: rgba(255,255,255,0.3);
+            position: relative;
+        }
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid rgba(255,255,255,0.3);
+        }
+        .flow-branch {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .flow-branch-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 280px;
+        }
+        .flow-branch-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .flow-branch-label.yes { color: #00d4aa; }
+        .flow-branch-label.no { color: #ff6b6b; }
+        .flow-horizontal-line {
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+            margin: 10px 0;
+        }
+        .flow-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+        .legend-color.start { background: #6c5ce7; border-color: #6c5ce7; }
+        .legend-color.decision { background: rgba(255,217,61,0.2); border-color: #ffd93d; }
+        .legend-color.action { background: rgba(52,152,219,0.2); border-color: #3498db; }
+        .legend-color.tool { background: rgba(155,89,182,0.2); border-color: #9b59b6; }
+        .legend-color.end { background: #00d4aa; border-color: #00d4aa; }
+
+        .flow-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .flow-tab {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .flow-tab:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .flow-tab.active {
+            background: rgba(0,212,170,0.2);
+            border-color: #00d4aa;
+            color: #00d4aa;
+        }
+        .flow-content {
+            display: none;
+        }
+        .flow-content.active {
+            display: block;
         }
 
         /* Info Modal Styles */
@@ -195,15 +388,26 @@
             .stats { grid-template-columns: repeat(2, 1fr); }
             .dashboard { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
-            .info-button { font-size: 0.8rem; padding: 10px 15px; }
+            .top-buttons { flex-direction: column; gap: 8px; }
+            .info-button, .flow-button { font-size: 0.8rem; padding: 10px 15px; }
+            .flow-tabs { gap: 3px; }
+            .flow-tab { padding: 8px 12px; font-size: 0.75rem; }
+            .flow-branch { flex-direction: column; gap: 20px; }
+            .flow-branch-item { max-width: 100%; }
+            .flowchart-modal { max-width: 95%; }
         }
     </style>
 </head>
 <body>
-    <!-- Info Button -->
-    <button class="info-button" onclick="openModal('infoModal')">
-        <span>?</span> What can this assistant do?
-    </button>
+    <!-- Top Buttons -->
+    <div class="top-buttons">
+        <button class="info-button" onclick="openModal('infoModal')">
+            <span>?</span> What can it do?
+        </button>
+        <button class="flow-button" onclick="openModal('flowModal')">
+            <span>&#8644;</span> User Flow
+        </button>
+    </div>
 
     <div class="header">
         <h1>BrightConnect Admin</h1>
@@ -512,6 +716,199 @@
         </div>
     </div>
 
+    <!-- User Flow Modal -->
+    <div class="modal" id="flowModal">
+        <div class="modal-content flowchart-modal">
+            <div class="modal-header">
+                <h2>Voice Assistant User Flow</h2>
+                <button class="modal-close" onclick="closeModal('flowModal')">&times;</button>
+            </div>
+            <div class="flowchart-container">
+                <!-- Tabs -->
+                <div class="flow-tabs">
+                    <button class="flow-tab active" onclick="showFlowTab('main')">Main Flow</button>
+                    <button class="flow-tab" onclick="showFlowTab('internet')">Internet Issue</button>
+                    <button class="flow-tab" onclick="showFlowTab('billing')">Pay Bill</button>
+                    <button class="flow-tab" onclick="showFlowTab('ticket')">Check Ticket</button>
+                    <button class="flow-tab" onclick="showFlowTab('escalation')">Escalation</button>
+                </div>
+
+                <!-- Main Flow -->
+                <div class="flow-content active" id="flow-main">
+                    <div class="flowchart">
+                        <div class="flow-node start"><div class="flow-node-label">Call Starts<br><small>Time-based Greeting</small></div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Get Customer Name</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Get Account Phone</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">What's the issue?</div></div>
+                        <div class="flow-branch">
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">Internet Down</div>
+                                <div class="flow-node action"><div class="flow-node-label">Internet Flow</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">Pay Bill</div>
+                                <div class="flow-node action"><div class="flow-node-label">Billing Flow</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">Ticket Status</div>
+                                <div class="flow-node action"><div class="flow-node-label">Ticket Flow</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">Other</div>
+                                <div class="flow-node error"><div class="flow-node-label">Escalation Flow</div></div>
+                            </div>
+                        </div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node end"><div class="flow-node-label">Call Closing<br><small>Time-based Goodbye</small></div></div>
+                    </div>
+                </div>
+
+                <!-- Internet Issue Flow -->
+                <div class="flow-content" id="flow-internet">
+                    <div class="flowchart">
+                        <div class="flow-node start"><div class="flow-node-label">Internet Not Working</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Empathize with customer</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Ask for ZIP code</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node tool"><div class="flow-node-label">&#9881; check_outage(zip_code)</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">Outage found?</div></div>
+                        <div class="flow-branch">
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label yes">YES - Outage</div>
+                                <div class="flow-node action"><div class="flow-node-label">Report ETA & reason</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node decision"><div class="flow-node-label">Want SMS notification?</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node tool"><div class="flow-node-label">&#9881; subscribe-outage-notification</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label no">NO - No Outage</div>
+                                <div class="flow-node action"><div class="flow-node-label">Guide modem restart</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node decision"><div class="flow-node-label">Issue resolved?</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node error"><div class="flow-node-label">Create support ticket</div></div>
+                            </div>
+                        </div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node end"><div class="flow-node-label">Call Closing</div></div>
+                    </div>
+                </div>
+
+                <!-- Billing Flow -->
+                <div class="flow-content" id="flow-billing">
+                    <div class="flowchart">
+                        <div class="flow-node start"><div class="flow-node-label">Pay My Bill</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node tool"><div class="flow-node-label">&#9881; get_account_balance(phone)</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">Name matches account?</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Report balance & due date</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">Want to pay now?</div></div>
+                        <div class="flow-branch">
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label yes">YES</div>
+                                <div class="flow-node decision"><div class="flow-node-label">SMS or Email?</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node action"><div class="flow-node-label">Confirm contact<br><small>(digit by digit / letter by letter)</small></div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node tool"><div class="flow-node-label">&#9881; send_payment_link</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node action"><div class="flow-node-label">Confirm link sent</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label no">NO</div>
+                                <div class="flow-node action"><div class="flow-node-label">Anything else?</div></div>
+                            </div>
+                        </div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node end"><div class="flow-node-label">Call Closing</div></div>
+                    </div>
+                </div>
+
+                <!-- Ticket Status Flow -->
+                <div class="flow-content" id="flow-ticket">
+                    <div class="flowchart">
+                        <div class="flow-node start"><div class="flow-node-label">Check Ticket Status</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node tool"><div class="flow-node-label">&#9881; get_recent_tickets(phone)</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">Tickets found?</div></div>
+                        <div class="flow-branch">
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label yes">YES</div>
+                                <div class="flow-node action"><div class="flow-node-label">Report ticket ID,<br>status & issue type</div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node decision"><div class="flow-node-label">Need more details?</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label no">NO</div>
+                                <div class="flow-node action"><div class="flow-node-label">No tickets found<br>Offer to help with something else</div></div>
+                            </div>
+                        </div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node end"><div class="flow-node-label">Call Closing</div></div>
+                    </div>
+                </div>
+
+                <!-- Escalation Flow -->
+                <div class="flow-content" id="flow-escalation">
+                    <div class="flowchart">
+                        <div class="flow-node start"><div class="flow-node-label">Escalation Required<br><small>Cancel / Plan Change / Dispute / Angry</small></div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Acknowledge & collect email<br><small>(Letter by letter confirmation)</small></div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">"Checking for specialist..."<br><small>(2-3 second pause)</small></div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node error"><div class="flow-node-label">No agent available</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node decision"><div class="flow-node-label">Callback or Email?</div></div>
+                        <div class="flow-branch">
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">CALLBACK</div>
+                                <div class="flow-node action"><div class="flow-node-label">Get callback number<br><small>(Digit by digit)</small></div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node action"><div class="flow-node-label">Get preferred time<br><small>(Morning/Afternoon/Evening)</small></div></div>
+                                <div class="flow-arrow"></div>
+                                <div class="flow-node action"><div class="flow-node-label">Get issue description</div></div>
+                            </div>
+                            <div class="flow-branch-item">
+                                <div class="flow-branch-label">EMAIL</div>
+                                <div class="flow-node action"><div class="flow-node-label">Get issue description</div></div>
+                            </div>
+                        </div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node tool"><div class="flow-node-label">&#9881; create_ticket(high priority)</div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node action"><div class="flow-node-label">Provide ticket number<br><small>"Your ticket is {ticket_id}"</small></div></div>
+                        <div class="flow-arrow"></div>
+                        <div class="flow-node end"><div class="flow-node-label">Call Closing</div></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="flow-legend">
+                    <div class="legend-item"><div class="legend-color start"></div> Start/End</div>
+                    <div class="legend-item"><div class="legend-color action"></div> Action/Speak</div>
+                    <div class="legend-item"><div class="legend-color decision"></div> Decision</div>
+                    <div class="legend-item"><div class="legend-color tool"></div> Tool Call</div>
+                    <div class="legend-item"><div class="legend-color" style="background: rgba(255,107,107,0.2); border-color: #ff6b6b;"></div> Error/Escalate</div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn" onclick="closeModal('flowModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Vapi Voice Assistant Button -->
     <button id="vapiButton" class="vapi-button" onclick="toggleVapiCall()">
         <span id="vapiIcon">📞</span>
@@ -552,6 +949,18 @@
         #vapiIcon { font-size: 1.2rem; }
     </style>
 
+    <script>
+        // Flow tab switching
+        window.showFlowTab = function(tabName) {
+            // Remove active from all tabs and contents
+            document.querySelectorAll('.flow-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.flow-content').forEach(content => content.classList.remove('active'));
+
+            // Add active to clicked tab and corresponding content
+            event.target.classList.add('active');
+            document.getElementById('flow-' + tabName).classList.add('active');
+        }
+    </script>
     <script type="module" src="/main.js"></script>
 </body>
 </html>
