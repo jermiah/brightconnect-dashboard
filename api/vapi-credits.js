@@ -11,7 +11,13 @@ export default async function handler(req, res) {
   const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY
 
   if (!VAPI_PRIVATE_KEY) {
-    return res.status(500).json({ error: 'API key not configured' })
+    // Debug: list available env vars (keys only, not values)
+    const envKeys = Object.keys(process.env).filter(k => k.includes('VAPI') || k.includes('vapi'))
+    return res.status(500).json({
+      error: 'API key not configured',
+      availableVapiKeys: envKeys,
+      hint: 'Add VAPI_PRIVATE_KEY in Vercel env vars'
+    })
   }
 
   try {
@@ -24,7 +30,12 @@ export default async function handler(req, res) {
     })
 
     if (!response.ok) {
-      throw new Error(`VAPI API error: ${response.status}`)
+      const errorText = await response.text()
+      return res.status(500).json({
+        error: 'VAPI API error',
+        status: response.status,
+        details: errorText
+      })
     }
 
     const data = await response.json()
@@ -32,7 +43,9 @@ export default async function handler(req, res) {
       credits: data.remainingBalance || data.balance || 0
     })
   } catch (error) {
-    console.error('Error fetching VAPI credits:', error)
-    return res.status(500).json({ error: 'Failed to fetch credits' })
+    return res.status(500).json({
+      error: 'Failed to fetch credits',
+      message: error.message
+    })
   }
 }
