@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET')
 
@@ -7,45 +6,47 @@ export default async function handler(req, res) {
     return res.status(200).end()
   }
 
-  // Use non-VITE prefixed env var for serverless functions
   const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY
 
   if (!VAPI_PRIVATE_KEY) {
-    // Debug: list available env vars (keys only, not values)
-    const envKeys = Object.keys(process.env).filter(k => k.includes('VAPI') || k.includes('vapi'))
-    return res.status(500).json({
-      error: 'API key not configured',
-      availableVapiKeys: envKeys,
-      hint: 'Add VAPI_PRIVATE_KEY in Vercel env vars'
-    })
+    return res.status(500).json({ error: 'API key not configured' })
   }
 
-  try {
-    const response = await fetch('https://api.vapi.ai/account', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${VAPI_PRIVATE_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    })
+  // Try multiple possible endpoints
+  const endpoints = [
+    'https://api.vapi.ai/org',
+    'https://api.vapi.ai/organization',
+    'https://api.vapi.ai/me',
+    'https://api.vapi.ai/billing'
+  ]
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      return res.status(500).json({
-        error: 'VAPI API error',
-        status: response.status,
-        details: errorText
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${VAPI_PRIVATE_KEY}`,
+          'Content-Type': 'application/json'
+        }
       })
-    }
 
-    const data = await response.json()
-    return res.status(200).json({
-      credits: data.remainingBalance || data.balance || 0
-    })
-  } catch (error) {
-    return res.status(500).json({
-      error: 'Failed to fetch credits',
-      message: error.message
-    })
+      if (response.ok) {
+        const data = await response.json()
+        return res.status(200).json({
+          credits: data.remainingBalance || data.balance || data.credits || 0,
+          endpoint: endpoint,
+          raw: data
+        })
+      }
+    } catch (e) {
+      // Try next endpoint
+    }
   }
+
+  // If none worked, return error with attempted endpoints
+  return res.status(500).json({
+    error: 'No working VAPI endpoint found',
+    triedEndpoints: endpoints,
+    hint: 'VAPI may not expose account balance via API'
+  })
 }
