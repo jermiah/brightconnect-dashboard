@@ -88,14 +88,123 @@
         .detail-row span:last-child { color: #fff; font-weight: 500; }
         .detail-description { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-top: 10px; color: #ddd; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
 
+        /* Info Button Styles */
+        .info-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+        .info-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+        }
+        .info-button span:first-child {
+            background: rgba(255,255,255,0.2);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Info Modal Styles */
+        .info-modal {
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .info-intro {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .info-intro strong {
+            color: #00d4aa;
+        }
+        .use-case {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 3px solid #00d4aa;
+        }
+        .use-case.escalation {
+            border-left-color: #ffd93d;
+        }
+        .use-case-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .use-case-icon {
+            background: #00d4aa;
+            color: #1a1a2e;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .use-case.escalation .use-case-icon {
+            background: #ffd93d;
+        }
+        .use-case h3 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .use-case ul {
+            margin: 0;
+            padding-left: 40px;
+            color: #bbb;
+        }
+        .use-case li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        .escalation-note {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(255,217,61,0.1);
+            border-radius: 8px;
+            color: #ffd93d;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 768px) {
             .stats { grid-template-columns: repeat(2, 1fr); }
             .dashboard { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
+            .info-button { font-size: 0.8rem; padding: 10px 15px; }
         }
     </style>
 </head>
 <body>
+    <!-- Info Button -->
+    <button class="info-button" onclick="openModal('infoModal')">
+        <span>?</span> What can this assistant do?
+    </button>
+
     <div class="header">
         <h1>BrightConnect Admin</h1>
         <p>Real-time Voice Assistant Dashboard</p>
@@ -328,6 +437,77 @@
             </div>
             <div class="form-actions">
                 <button type="button" class="btn" onclick="closeTicketModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Assistant Info Modal -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content info-modal">
+            <div class="modal-header">
+                <h2>BrightConnect Voice Assistant</h2>
+                <button class="modal-close" onclick="closeModal('infoModal')">&times;</button>
+            </div>
+            <div class="info-content">
+                <p class="info-intro">Click the <strong>"Call Assistant"</strong> button to speak with our AI-powered voice assistant. Here's what it can help you with:</p>
+
+                <div class="use-case">
+                    <div class="use-case-header">
+                        <span class="use-case-icon">1</span>
+                        <h3>"My internet is not working"</h3>
+                    </div>
+                    <ul>
+                        <li>Asks for your ZIP code to check service status</li>
+                        <li>Checks our outage database in real-time</li>
+                        <li>If outage found: Reports estimated resolution time and reason</li>
+                        <li>If no outage: Offers to create a support ticket</li>
+                        <li>Can sign you up for SMS notifications when service is restored</li>
+                    </ul>
+                </div>
+
+                <div class="use-case">
+                    <div class="use-case-header">
+                        <span class="use-case-icon">2</span>
+                        <h3>"I want to pay my bill"</h3>
+                    </div>
+                    <ul>
+                        <li>Asks for your name and account phone number</li>
+                        <li>Verifies your identity by confirming the name on the account</li>
+                        <li>Retrieves your current balance and due date</li>
+                        <li>Offers to send a secure payment link via SMS or Email</li>
+                        <li>Provides a confirmation code for your records</li>
+                    </ul>
+                </div>
+
+                <div class="use-case">
+                    <div class="use-case-header">
+                        <span class="use-case-icon">3</span>
+                        <h3>"Check my ticket status"</h3>
+                    </div>
+                    <ul>
+                        <li>Asks for your phone number to look up tickets</li>
+                        <li>Finds your most recent support tickets</li>
+                        <li>Reports ticket ID, status, and issue type</li>
+                        <li>Provides updates on open or pending tickets</li>
+                    </ul>
+                </div>
+
+                <div class="use-case escalation">
+                    <div class="use-case-header">
+                        <span class="use-case-icon">4</span>
+                        <h3>Other Requests (Escalation)</h3>
+                    </div>
+                    <ul>
+                        <li>Cancellation requests</li>
+                        <li>Plan changes or upgrades</li>
+                        <li>Billing disputes</li>
+                        <li>Technical issues requiring human support</li>
+                    </ul>
+                    <p class="escalation-note">These requests are automatically escalated by creating a support ticket with high priority for our team to follow up.</p>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn" onclick="closeModal('infoModal')">Got it!</button>
             </div>
         </div>
     </div>
