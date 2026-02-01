@@ -277,6 +277,60 @@
             display: block;
         }
 
+        /* Markdown Content Styles */
+        .markdown-content {
+            color: #bbb;
+            line-height: 1.7;
+        }
+        .markdown-content h2.qa-main-title {
+            color: #00d4aa;
+            font-size: 1.4rem;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0,212,170,0.3);
+        }
+        .markdown-content h2 {
+            color: #00d4aa;
+            font-size: 1.2rem;
+            margin: 30px 0 15px 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .markdown-content h3 {
+            color: #e17055;
+            font-size: 1.05rem;
+            margin: 25px 0 12px 0;
+        }
+        .markdown-content h4 {
+            color: #fff;
+            font-size: 0.95rem;
+            margin: 18px 0 8px 0;
+        }
+        .markdown-content p {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .markdown-content ul {
+            padding-left: 25px;
+            margin: 10px 0 15px 0;
+        }
+        .markdown-content li {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .markdown-content strong {
+            color: #fff;
+        }
+        .markdown-content em {
+            color: #aaa;
+        }
+        .markdown-content hr.qa-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,212,170,0.5), transparent);
+            margin: 30px 0;
+        }
+
         /* Flowchart Modal Styles */
         .flowchart-modal {
             max-width: 950px;
@@ -1064,103 +1118,8 @@
                 <h2>Assignment Questions & Answers</h2>
                 <button class="modal-close" onclick="closeModal('qaModal')">&times;</button>
             </div>
-            <div class="qa-content">
-                <!-- Tabs -->
-                <div class="qa-tabs">
-                    <button class="qa-tab active" onclick="showQATab('platform')">Platform Choice</button>
-                    <button class="qa-tab" onclick="showQATab('stack')">Tech Stack</button>
-                    <button class="qa-tab" onclick="showQATab('design')">Design Decisions</button>
-                </div>
-
-                <!-- Platform Choice Panel -->
-                <div class="qa-panel active" id="qa-platform">
-                    <div class="qa-section highlight">
-                        <h3>Why Vapi over ElevenLabs Agent Builder?</h3>
-                        <p>I tested both Vapi Agents and ElevenLabs Agents for this use case. While ElevenLabs provides an impressive all-in-one agent platform with high-quality voices and strong conversational controls, I chose Vapi due to <strong>architecture clarity, control, and reliability</strong> for production-style voice workflows.</p>
-
-                        <h4>1. Better Control Over the Voice Pipeline</h4>
-                        <p>With Vapi, the voice stack is explicitly separated: STT → LLM → TTS → Tooling → Escalation. This made it easier to tune latency at each stage, swap providers independently, and reason about failures and fallbacks.</p>
-
-                        <h4>2. Stronger Intent Handling & Escalation Logic</h4>
-                        <p>This use case requires clear intent detection, predictable conversation flow, and safe escalation when the agent is unsure. Vapi's agent builder makes intent routing, tool calls, and escalation paths more explicit.</p>
-
-                        <h4>3. More Predictable Real-time Behavior</h4>
-                        <p>In testing, Vapi showed more consistent turn-taking, interruptions and barge-in handling were more predictable, and latency felt more stable across longer conversations.</p>
-
-                        <h4>4. Easier Debugging & Observability</h4>
-                        <p>Vapi provides clearer event-level visibility (user transcript, agent response, interruptions), failure points, and LLM fallback behavior.</p>
-
-                        <div class="qa-summary">
-                            <p><strong>Summary:</strong> Although ElevenLabs provides a powerful agent platform with excellent voice quality, I chose Vapi because it offers clearer control over intent handling, escalation logic, and the end-to-end voice pipeline—making it a better fit for production-style customer support agents.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tech Stack Panel -->
-                <div class="qa-panel" id="qa-stack">
-                    <div class="qa-section">
-                        <h3><span class="qa-tag stt">STT</span> Speech-to-Text: Deepgram</h3>
-                        <p>Deepgram was selected as the primary STT provider due to its <strong>low streaming latency</strong> and strong performance in real-time conversational systems. It consistently provides sub-second partial transcripts, enabling natural back-and-forth interactions.</p>
-                        <h4>Trade-offs:</h4>
-                        <ul>
-                            <li><strong>Speechmatics</strong> was also evaluated and is preferred for noisy environments and multilingual/code-switching use cases (e.g., mixed English-Tamil conversations)</li>
-                            <li>For production systems serving diverse languages and accents, Speechmatics would be the preferred choice</li>
-                            <li>For this low-latency, English-focused use case, Deepgram provides the best overall trade-off</li>
-                        </ul>
-                    </div>
-
-                    <div class="qa-section">
-                        <h3><span class="qa-tag tts">TTS</span> Text-to-Speech: ElevenLabs Flash v2.5</h3>
-                        <p>ElevenLabs was selected for TTS due to its <strong>high-quality, natural-sounding voices</strong> and low-latency performance. The Eleven Flash v2.5 model was chosen for its ~75ms audio generation latency.</p>
-                        <h4>Key Considerations:</h4>
-                        <ul>
-                            <li>While relatively more expensive, cost optimization was not the primary focus</li>
-                            <li>Latency and voice quality were prioritized as they significantly improve perceived responsiveness, trust, and engagement</li>
-                            <li>Eleven Turbo v2.5 could be considered for richer voice quality if needed</li>
-                        </ul>
-                    </div>
-
-                    <div class="qa-section">
-                        <h3><span class="qa-tag llm">LLM</span> Language Model: Groq GPT OSS 20B</h3>
-                        <p>Groq-hosted GPT OSS 20B was selected due to its <strong>very low inference latency (~280ms)</strong> and cost efficiency. Groq models are highly optimized for fast inference, making them well-suited for real-time voice interactions.</p>
-                        <h4>Scaling Options:</h4>
-                        <ul>
-                            <li>For simple customer support flows, the 20B model provides sufficient language understanding</li>
-                            <li>For more complex tasks or advanced reasoning, GPT OSS 120B could be used while still maintaining low latency on Groq infrastructure</li>
-                            <li>OpenAI GPT-4o Mini was also considered but Groq offers better latency for this use case</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Design Decisions Panel -->
-                <div class="qa-panel" id="qa-design">
-                    <div class="qa-section">
-                        <h3>Why These Specific Use Cases?</h3>
-                        <p>The goal was to demonstrate high-quality automation for <strong>common, well-scoped support requests</strong>. Internet troubleshooting and bill payment represent two of the most frequent and structurally different customer intents.</p>
-                        <ul>
-                            <li><strong>Internet Issues:</strong> Requires real-time data lookup (outages), conditional logic (troubleshooting vs. escalation), and follow-up actions (SMS notifications)</li>
-                            <li><strong>Bill Payment:</strong> Requires account verification, secure data handling, and multi-channel delivery (SMS/Email)</li>
-                            <li><strong>Escalation:</strong> More complex or sensitive flows are intentionally routed to human agents</li>
-                        </ul>
-                    </div>
-
-                    <div class="qa-section">
-                        <h3>Why No Query Tools?</h3>
-                        <p>For this prototype, I <strong>intentionally avoided query tools</strong> to keep the system simple and low-latency. The assistant uses predefined tool calls with structured inputs/outputs.</p>
-                        <p>In a production system with highly dynamic data or complex account-level queries, query tools would be considered for controlled information retrieval.</p>
-                    </div>
-
-                    <div class="qa-section">
-                        <h3>Reusable Prompt Patterns</h3>
-                        <p>The system prompt uses <strong>reusable confirmation processes</strong> to ensure consistency:</p>
-                        <ul>
-                            <li><strong>[Email Confirmation Process]:</strong> Letter-by-letter spelling confirmation</li>
-                            <li><strong>[Phone Confirmation Process]:</strong> Digit-by-digit number confirmation</li>
-                            <li><strong>Tool Failure Handling:</strong> Retry once, then graceful fallback with ticket creation</li>
-                            <li><strong>Time-based Greetings/Closings:</strong> Dynamic based on time of day</li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="qa-content" id="qaMarkdownContent">
+                <p style="color: #888; text-align: center;">Loading...</p>
             </div>
             <div class="form-actions">
                 <button type="button" class="btn" onclick="closeModal('qaModal')">Close</button>
@@ -1220,15 +1179,61 @@
             document.getElementById('flow-' + tabName).classList.add('active');
         }
 
-        // Q&A tab switching
-        window.showQATab = function(tabName) {
-            // Remove active from all tabs and panels
-            document.querySelectorAll('.qa-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.qa-panel').forEach(panel => panel.classList.remove('active'));
+        // Simple markdown to HTML converter
+        function markdownToHtml(md) {
+            let html = md
+                // Escape HTML
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                // Headers
+                .replace(/^### (.*$)/gm, '<h4>$1</h4>')
+                .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^# (.*$)/gm, '<h2 class="qa-main-title">$1</h2>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Italic
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Horizontal rule
+                .replace(/^---$/gm, '<hr class="qa-divider">')
+                // Lists
+                .replace(/^\- (.*$)/gm, '<li>$1</li>')
+                // Wrap consecutive li tags in ul
+                .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+                // Paragraphs
+                .replace(/\n\n/g, '</p><p>')
+                // Line breaks in lists
+                .replace(/<\/ul><p>/g, '</ul>\n<p>')
+                .replace(/<\/p><ul>/g, '</p>\n<ul>');
 
-            // Add active to clicked tab and corresponding panel
-            event.target.classList.add('active');
-            document.getElementById('qa-' + tabName).classList.add('active');
+            return '<div class="markdown-content"><p>' + html + '</p></div>';
+        }
+
+        // Load and render markdown
+        let markdownLoaded = false;
+        window.loadMarkdown = async function() {
+            if (markdownLoaded) return;
+
+            try {
+                const response = await fetch('/ASSIGNMENT.md');
+                if (!response.ok) throw new Error('Failed to load');
+                const markdown = await response.text();
+                const html = markdownToHtml(markdown);
+                document.getElementById('qaMarkdownContent').innerHTML = html;
+                markdownLoaded = true;
+            } catch (error) {
+                document.getElementById('qaMarkdownContent').innerHTML =
+                    '<p style="color: #ff6b6b;">Failed to load content. Please try again.</p>';
+            }
+        }
+
+        // Override openModal to load markdown when Q&A modal opens
+        const originalOpenModal = window.openModal;
+        window.openModal = function(id) {
+            if (id === 'qaModal') {
+                loadMarkdown();
+            }
+            document.getElementById(id).classList.add('active');
         }
     </script>
     <script type="module" src="/main.js"></script>
