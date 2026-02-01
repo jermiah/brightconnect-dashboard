@@ -175,10 +175,11 @@ Speech-to-speech (S2S) models handle the entire conversation loop within a singl
 
 | Component | Current | With OpenAI Realtime |
 |-----------|---------|---------------------|
-| STT | ~200ms (Deepgram) | Eliminated |
+| STT | ~100ms (Deepgram) | Eliminated |
 | LLM | ~390ms (GPT-4o Mini) | ~200-400ms (native audio) |
 | TTS | ~75ms (ElevenLabs) | Eliminated |
-| **Total** | **~665ms** | **~200-400ms** |
+| Network | ~100ms | ~50ms |
+| **Total** | **~665ms** | **~250-450ms** |
 
 **Trade-offs:**
 - **Higher cost:** S2S models are compute-intensive (processing raw audio > text)
@@ -219,10 +220,11 @@ Keep the existing architecture but aggressively optimize each component. This is
 
 | Component | Current | Optimized | Savings |
 |-----------|---------|-----------|---------|
-| STT | ~200ms | ~120-150ms | ~50-80ms |
+| STT | ~100ms | ~80-100ms | ~20ms |
 | LLM | ~390ms | ~290ms | ~100ms |
 | TTS | ~75ms | ~40ms | ~35ms |
-| **Total** | **~665ms** | **~450-480ms** | **~185-215ms** |
+| Network | ~100ms | ~80ms | ~20ms |
+| **Total** | **~665ms** | **~490-510ms** | **~155-175ms** |
 
 **Achieves ~28-32% reduction** - close to 40% but may need Option 1 or 3 for full target.
 
@@ -333,8 +335,8 @@ Worth special mention as an alternative to OpenAI Realtime:
 | Human conversation | 200-300ms | Natural turn-taking rhythm |
 | Traditional pipeline (unoptimized) | 1000-2000ms | STT API + LLM API + TTS API |
 | Traditional pipeline (optimized) | 500-800ms | Streaming, fast providers |
-| Vapi.ai (optimized) | 400-600ms | Best-in-class traditional |
-| **Our implementation** | **~665ms** | **Deepgram + GPT-4o Mini + ElevenLabs** |
+| Vapi.ai (optimized) | 500-650ms | Best-in-class (excludes web server) |
+| **Our implementation** | **~665ms** | **Includes everything (STT + LLM + TTS + Network)** |
 | OpenAI Realtime | 200-400ms | Native S2S |
 | Gemini Live | 200-350ms | Native multimodal |
 | Custom LiveKit + S2S | 200-300ms | Maximum optimization |
