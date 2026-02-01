@@ -606,7 +606,7 @@
 
     <!-- Top Right Button -->
     <div class="top-right-buttons">
-        <button class="qa-button" onclick="openModal('qaModal')">
+        <button class="qa-button" onclick="loadMarkdown(); openModal('qaModal')">
             <span>&#128218;</span> Assignment Q&A
         </button>
     </div>
@@ -1246,14 +1246,6 @@
             }
         }
 
-        // Override openModal to load markdown when Q&A modal opens
-        const originalOpenModal = window.openModal;
-        window.openModal = function(id) {
-            if (id === 'qaModal') {
-                loadMarkdown();
-            }
-            document.getElementById(id).classList.add('active');
-        }
     </script>
     <script type="module" src="/main.js"></script>
 </body>
