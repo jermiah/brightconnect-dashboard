@@ -108,10 +108,11 @@ The slight latency increase is an acceptable trade-off for significantly improve
 
 ### Why These Specific Use Cases?
 
-The goal of this prototype was to demonstrate high-quality automation for **common, well-scoped support requests**. Internet troubleshooting and bill payment represent two of the most frequent and structurally different customer intents.
+The goal of this prototype was to demonstrate high-quality automation for **common, well-scoped support requests**. Internet troubleshooting, bill payment, and ticket status represent the most frequent and structurally different customer intents.
 
 - **Internet Issues:** Requires real-time data lookup (outages), conditional logic (troubleshooting vs. escalation), and follow-up actions (SMS notifications)
 - **Bill Payment:** Requires account verification, secure data handling, and multi-channel delivery (SMS/Email)
+- **Ticket Status:** Allows customers to check their recent support tickets using phone number lookup, providing transparency on open issues without agent involvement
 - **Escalation:** More complex or sensitive flows were intentionally routed to human agents to ensure a good customer experience
 
 ### Why No Query Tools?
