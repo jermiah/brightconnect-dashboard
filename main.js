@@ -367,6 +367,40 @@ setInterval(loadData, 15000)
 // Vapi Voice Assistant
 const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY
 const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID
+const VAPI_PRIVATE_KEY = import.meta.env.VITE_VAPI_PRIVATE_KEY
+
+// Fetch and display VAPI credits
+async function loadVapiCredits() {
+  if (!VAPI_PRIVATE_KEY) {
+    document.getElementById('creditsAmount').textContent = 'No API Key'
+    return
+  }
+
+  try {
+    const response = await fetch('https://api.vapi.ai/account', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${VAPI_PRIVATE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch credits')
+    }
+
+    const data = await response.json()
+    const credits = data.remainingBalance || data.balance || 0
+    document.getElementById('creditsAmount').textContent = `$${parseFloat(credits).toFixed(2)}`
+  } catch (error) {
+    console.error('Error fetching VAPI credits:', error)
+    document.getElementById('creditsAmount').textContent = 'Error'
+  }
+}
+
+// Load credits on page load and refresh every 60 seconds
+loadVapiCredits()
+setInterval(loadVapiCredits, 60000)
 
 let vapiInstance = null
 let isCallActive = false

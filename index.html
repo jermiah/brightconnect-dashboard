@@ -142,6 +142,27 @@
             top: 20px;
             right: 20px;
             z-index: 998;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .credits-display {
+            background: linear-gradient(135deg, #2d3436 0%, #1a1a2e 100%);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            padding: 10px 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .credits-icon {
+            font-size: 1rem;
+        }
+        .credits-amount {
+            color: #00d4aa;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
         .qa-button {
             background: linear-gradient(135deg, #e17055 0%, #fdcb6e 100%);
@@ -727,6 +748,10 @@
 
     <!-- Top Right Button -->
     <div class="top-right-buttons">
+        <div class="credits-display" id="creditsDisplay">
+            <span class="credits-icon">💰</span>
+            <span class="credits-amount" id="creditsAmount">--</span>
+        </div>
         <button class="qa-button" onclick="loadMarkdown(); openModal('qaModal')">
             <span>&#128218;</span> Assignment Q&A
         </button>
