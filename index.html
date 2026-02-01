@@ -1209,19 +1209,38 @@
             return '<div class="markdown-content"><p>' + html + '</p></div>';
         }
 
-        // Load and render markdown
+        // Load and render markdown from Supabase
         let markdownLoaded = false;
         window.loadMarkdown = async function() {
             if (markdownLoaded) return;
 
             try {
-                const response = await fetch('/ASSIGNMENT.md');
+                // Fetch from Supabase
+                const supabaseUrl = 'https://rsmrvrtxxittloukngge.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbXJ2cnR4eGl0dGxvdWtuZ2dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MTkyMjksImV4cCI6MjA4NTM5NTIyOX0.1AuQRcWFX6lPMXCbStbi6n6SciYVEsp1sxZWbpCQzk4';
+
+                const response = await fetch(
+                    `${supabaseUrl}/rest/v1/content?id=eq.assignment&select=markdown`,
+                    {
+                        headers: {
+                            'apikey': supabaseKey,
+                            'Authorization': `Bearer ${supabaseKey}`
+                        }
+                    }
+                );
+
                 if (!response.ok) throw new Error('Failed to load');
-                const markdown = await response.text();
-                const html = markdownToHtml(markdown);
-                document.getElementById('qaMarkdownContent').innerHTML = html;
-                markdownLoaded = true;
+                const data = await response.json();
+
+                if (data.length > 0 && data[0].markdown) {
+                    const html = markdownToHtml(data[0].markdown);
+                    document.getElementById('qaMarkdownContent').innerHTML = html;
+                    markdownLoaded = true;
+                } else {
+                    throw new Error('No content found');
+                }
             } catch (error) {
+                console.error('Error loading markdown:', error);
                 document.getElementById('qaMarkdownContent').innerHTML =
                     '<p style="color: #ff6b6b;">Failed to load content. Please try again.</p>';
             }
