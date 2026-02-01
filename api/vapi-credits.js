@@ -7,7 +7,8 @@ export default async function handler(req, res) {
     return res.status(200).end()
   }
 
-  const VAPI_PRIVATE_KEY = process.env.VITE_VAPI_PRIVATE_KEY
+  // Use non-VITE prefixed env var for serverless functions
+  const VAPI_PRIVATE_KEY = process.env.VAPI_PRIVATE_KEY
 
   if (!VAPI_PRIVATE_KEY) {
     return res.status(500).json({ error: 'API key not configured' })
