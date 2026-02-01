@@ -330,6 +330,49 @@
             background: linear-gradient(90deg, transparent, rgba(0,212,170,0.5), transparent);
             margin: 30px 0;
         }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+        .markdown-content th {
+            background: rgba(0,212,170,0.15);
+            color: #00d4aa;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .markdown-content td {
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #bbb;
+        }
+        .markdown-content tr:nth-child(even) {
+            background: rgba(255,255,255,0.02);
+        }
+        .markdown-content code {
+            background: rgba(0,212,170,0.1);
+            color: #00d4aa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .markdown-content pre {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            color: #ddd;
+        }
 
         /* Flowchart Modal Styles */
         .flowchart-modal {
@@ -1294,11 +1337,38 @@
 
         // Simple markdown to HTML converter
         function markdownToHtml(md) {
+            // Parse tables first (before escaping)
+            md = md.replace(/(\|.+\|\r?\n)+/g, function(match) {
+                const rows = match.trim().split('\n');
+                if (rows.length < 2) return match;
+
+                // Check if second row is separator (|---|---|)
+                const isSeparator = /^\|[\s\-:]+\|/.test(rows[1]);
+                if (!isSeparator) return match;
+
+                let table = '<table>';
+                rows.forEach((row, i) => {
+                    if (i === 1) return; // Skip separator row
+                    const cells = row.split('|').filter(c => c.trim() !== '');
+                    const tag = i === 0 ? 'th' : 'td';
+                    const rowTag = i === 0 ? 'thead' : (i === 2 ? 'tbody' : '');
+                    if (rowTag === 'thead') table += '<thead>';
+                    if (rowTag === 'tbody') table += '</thead><tbody>';
+                    table += '<tr>' + cells.map(c => `<${tag}>${c.trim()}</${tag}>`).join('') + '</tr>';
+                });
+                table += '</tbody></table>';
+                return table;
+            });
+
+            // Parse code blocks
+            md = md.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+
+            // Parse inline code
+            md = md.replace(/`([^`]+)`/g, '<code>$1</code>');
+
             let html = md
-                // Escape HTML
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
+                // Escape HTML (but not our already-converted elements)
+                .replace(/&(?!amp;|lt;|gt;)/g, '&amp;')
                 // Headers
                 .replace(/^### (.*$)/gm, '<h4>$1</h4>')
                 .replace(/^## (.*$)/gm, '<h3>$1</h3>')
