@@ -175,10 +175,13 @@ window.openModal = function(id) {
 
 window.closeModal = function(id) {
   document.getElementById(id).classList.remove('active')
-  document.getElementById(id).querySelector('form').reset()
-  // Reset hidden ID fields
-  const idInput = document.getElementById(id).querySelector('input[name="id"]')
-  if (idInput) idInput.value = ''
+  const form = document.getElementById(id).querySelector('form')
+  if (form) {
+    form.reset()
+    // Reset hidden ID fields
+    const idInput = form.querySelector('input[name="id"]')
+    if (idInput) idInput.value = ''
+  }
 }
 
 // Open Outage Modal (Add mode)
