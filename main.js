@@ -421,7 +421,8 @@ window.toggleVapiCall = async function() {
 
         vapiInstance.on('error', (error) => {
           console.error('Vapi error:', error)
-          alert('Call error: ' + error.message)
+          const errorMsg = error?.message || error?.error || JSON.stringify(error) || 'Unknown error'
+          alert('Call error: ' + errorMsg)
           isCallActive = false
           button.classList.remove('active')
           icon.textContent = '📞'
@@ -432,7 +433,8 @@ window.toggleVapiCall = async function() {
       await vapiInstance.start(VAPI_ASSISTANT_ID)
     } catch (error) {
       console.error('Failed to start call:', error)
-      alert('Failed to start call. Check console for details.')
+      const errorMsg = error?.message || error?.error || JSON.stringify(error) || 'Unknown error'
+      alert('Failed to start call: ' + errorMsg)
     }
   } else {
     if (vapiInstance) {
