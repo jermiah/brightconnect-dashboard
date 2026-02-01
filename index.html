@@ -720,18 +720,189 @@
             color: #9b59b6;
         }
 
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .dashboard { grid-template-columns: 1fr; }
+            body { padding: 10px; padding-top: 70px; }
+
+            /* Header */
+            .header { margin-bottom: 15px; margin-top: 10px; }
+            .header h1 { font-size: 1.5rem; }
+            .header p { font-size: 0.85rem; }
+
+            /* Stats */
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            .stats .stat-card:last-child {
+                grid-column: span 2;
+            }
+            .stat-card { padding: 12px; }
+            .stat-number { font-size: 1.4rem; }
+            .stat-label { font-size: 0.75rem; }
+
+            /* Dashboard Cards */
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .card { padding: 15px; }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding-bottom: 12px;
+            }
+            .card-title { font-size: 1rem; }
+            .table-container { max-height: 180px; }
+
+            /* Tables */
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 5px; }
+            th { font-size: 0.65rem; }
+            .btn.edit, .btn.view { padding: 3px 6px; font-size: 0.65rem; }
+
+            /* Top Left Buttons */
+            .top-buttons {
+                flex-direction: row;
+                gap: 6px;
+                top: 10px;
+                left: 10px;
+            }
+            .info-button, .flow-button {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+            .info-button span:first-child,
+            .flow-button span:first-child {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
+            }
+
+            /* Top Right Buttons */
+            .top-right-buttons {
+                top: 10px;
+                right: 10px;
+                gap: 8px;
+            }
+            .credits-display {
+                padding: 6px 10px;
+                border-radius: 20px;
+            }
+            .credits-icon { font-size: 0.85rem; }
+            .credits-amount { font-size: 0.75rem; }
+            .qa-button {
+                padding: 8px 12px;
+                font-size: 0.7rem;
+                border-radius: 20px;
+            }
+            .qa-button span:first-child { font-size: 0.9rem; }
+
+            /* Vapi Call Button */
+            .vapi-button {
+                bottom: 15px;
+                right: 15px;
+                padding: 12px 18px;
+                font-size: 0.85rem;
+            }
+            #vapiIcon { font-size: 1rem; }
+
+            /* Forms */
             .form-row { grid-template-columns: 1fr; }
-            .top-buttons { flex-direction: column; gap: 8px; }
-            .info-button, .flow-button { font-size: 0.8rem; padding: 10px 15px; }
+            .form-group input, .form-group select { padding: 8px 10px; }
+
+            /* Modals */
+            .modal-content {
+                width: 95%;
+                padding: 20px 15px;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+            .modal-header h2 { font-size: 1.1rem; }
+            .info-modal, .qa-modal, .flowchart-modal {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+
+            /* Q&A Modal */
+            .qa-content { padding: 5px; }
+            .markdown-content h2 { font-size: 1rem; margin: 20px 0 10px 0; }
+            .markdown-content h3 { font-size: 0.95rem; }
+            .markdown-content p, .markdown-content li { font-size: 0.8rem; }
+            .markdown-content table { font-size: 0.7rem; }
+            .markdown-content th, .markdown-content td { padding: 6px 8px; }
+            .markdown-content pre { padding: 10px; font-size: 0.75rem; }
+
+            /* Info Modal */
+            .info-intro { font-size: 0.85rem; }
+            .use-case { padding: 15px; }
+            .use-case h3 { font-size: 0.9rem; }
+            .use-case li { font-size: 0.8rem; }
             .greeting-grid { grid-template-columns: 1fr; }
-            .flow-tabs { gap: 3px; }
-            .flow-tab { padding: 8px 12px; font-size: 0.75rem; }
-            .flow-branch { flex-direction: column; gap: 20px; }
+            .greeting-item { padding: 10px; }
+            .greeting-text { font-size: 0.8rem; }
+            .feature-highlight, .night-highlight { padding: 15px; }
+            .feature-highlight h3, .night-highlight h3 { font-size: 0.9rem; }
+            .night-highlight p, .night-highlight li { font-size: 0.8rem; }
+
+            /* Flow Modal */
+            .flow-tabs { gap: 3px; flex-wrap: wrap; }
+            .flow-tab { padding: 6px 10px; font-size: 0.7rem; }
+            .flow-branch { flex-direction: column; gap: 15px; }
             .flow-branch-item { max-width: 100%; }
-            .flowchart-modal { max-width: 95%; }
+            .flow-node {
+                min-width: 150px;
+                max-width: 100%;
+                padding: 10px 15px;
+            }
+            .flow-node-label { font-size: 0.75rem; }
+            .flow-legend { gap: 10px; padding: 10px; }
+            .legend-item { font-size: 0.7rem; }
+
+            /* Ticket Details */
+            .detail-row { padding: 8px 0; }
+            .detail-label { font-size: 0.8rem; }
+            .detail-description { padding: 10px; font-size: 0.8rem; }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 400px) {
+            body { padding: 8px; padding-top: 65px; }
+
+            .top-buttons {
+                left: 8px;
+                top: 8px;
+            }
+            .info-button, .flow-button {
+                padding: 6px 10px;
+                font-size: 0.65rem;
+            }
+            .info-button span:first-child,
+            .flow-button span:first-child {
+                display: none;
+            }
+
+            .top-right-buttons {
+                right: 8px;
+                top: 8px;
+                gap: 5px;
+            }
+            .credits-display { padding: 5px 8px; }
+            .qa-button { padding: 6px 10px; }
+            .qa-button span:first-child { display: none; }
+
+            .header h1 { font-size: 1.3rem; }
+            .stats { gap: 6px; }
+            .stat-number { font-size: 1.2rem; }
+
+            .vapi-button {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+                bottom: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
