@@ -1,5 +1,16 @@
 # BrightConnect Voice Assistant - Assignment Q&A
 
+## Current Performance
+
+The assistant achieves **best-in-class latency** with excellent cost efficiency:
+
+- **Cost:** ~$0.11/min
+- **Latency:** ~665ms end-to-end
+
+This represents a strong balance between response quality and real-time performance for customer support use cases.
+
+---
+
 ## Why Vapi over ElevenLabs Agent Builder?
 
 I tested both Vapi Agents and ElevenLabs Agents for this use case. While ElevenLabs provides an impressive all-in-one agent platform with high-quality voices and strong conversational controls, I chose Vapi due to **architecture clarity, control, and reliability** for production-style voice workflows.
@@ -16,14 +27,14 @@ This made it easier to:
 
 ElevenLabs abstracts many of these steps, which is great for speed, but gives less visibility and control over the full pipeline.
 
-### 2. Stronger Intent Handling & Escalation Logic
+### 2. Prompt-Based Conversation Flow
 
-This use case requires:
-- Clear intent detection (schedule, reschedule, cancel, support)
-- Predictable conversation flow
+Vapi relies on the LLM to naturally route conversations based on detailed system prompt instructions, rather than requiring explicit intent definitions. This makes it flexible but requires well-structured prompts to ensure predictable behavior.
+
+This approach works well for:
+- Clear conversation flows defined in the system prompt
+- Tool calls triggered by conversational context
 - Safe escalation when the agent is unsure
-
-Vapi's agent builder makes intent routing, tool calls, and escalation paths more explicit and easier to reason about. This is especially important for customer support and appointment scheduling, where mistakes are costly.
 
 ### 3. More Predictable Real-time Behavior
 
@@ -72,19 +83,24 @@ ElevenLabs was selected for text-to-speech due to its **high-quality, natural-so
 - The Eleven Flash v2.5 model was chosen specifically for its **~75ms audio generation latency**, making it well-suited for real-time conversational agents
 - A more expressive model such as Eleven Turbo v2.5 could be considered if richer voice quality is required
 
-### Language Model: Groq GPT OSS 20B
+### Language Model: OpenAI GPT-4o Mini
 
-Two LLM options were considered: OpenAI models (GPT-4o Mini cluster) and Groq-hosted GPT OSS models.
+**Provider:** OpenAI
+**Model:** GPT-4o Mini
 
-**Why Groq GPT OSS 20B:**
-- **Very low inference latency (~280ms)** and cost efficiency
-- Groq models are highly optimized for fast inference, making them well-suited for real-time voice interactions where responsiveness is critical
-- For simple customer support and scheduling flows, the 20B model provides sufficient language understanding without unnecessary overhead
+**Initial Testing with Groq:**
+- Initially tested Groq-hosted models (GPT OSS 20B and 120B) due to their very low inference latency (~280ms)
+- However, encountered **inconsistent inference quality and errors** during Vapi integration
+- Groq's LLM inference within Vapi showed reliability issues that impacted conversation flow
 
-**Scaling Options:**
-- For more complex tasks or advanced reasoning scenarios, GPT OSS 120B could be used
-- Still maintains low latency on Groq infrastructure while offering stronger reasoning capabilities
-- The choice prioritizes low latency and efficiency for the current task, with flexibility to scale model size as complexity increases
+**Why GPT-4o Mini:**
+- **Reliable inference** with consistent quality in Vapi's pipeline
+- **~390ms latency** - slightly higher than Groq but significantly more stable
+- Strong language understanding for customer support flows
+- Better handling of tool calls and structured outputs
+- Well-documented and proven in production voice applications
+
+The slight latency increase is an acceptable trade-off for significantly improved reliability and inference quality.
 
 ---
 
@@ -115,6 +131,42 @@ The system prompt uses **reusable confirmation processes** to ensure consistency
 
 ---
 
+## Bonus: Further Latency Optimization
+
+The current implementation already achieves **best-in-class latency (~665ms)** using the standard STT → LLM → TTS pipeline. However, there are architectural approaches that could push latency even lower:
+
+### Speech-to-Speech Models
+
+Modern speech-to-speech models bypass the traditional STT → LLM → TTS pipeline entirely, processing audio directly:
+- Eliminates intermediate text conversion latency
+- More natural prosody and intonation
+- Examples: OpenAI's voice mode, emerging multimodal models
+
+### Gemini Live API
+
+Google's Gemini Live API offers real-time multimodal capabilities:
+- Native audio understanding and generation
+- Potential for lower latency through unified processing
+- Early-stage but promising for voice applications
+
+### Custom Inference Pipeline with LiveKit
+
+For production deployments requiring the absolute lowest latency, I would consider:
+- **LiveKit** for real-time audio transport and WebRTC infrastructure
+- Custom inference pipeline with optimized model serving
+- Edge deployment for reduced network latency
+- Streaming token generation for faster perceived response
+
+This architectural approach requires more development effort but offers the most control over the entire latency budget.
+
+---
+
 ## Summary
 
-Although ElevenLabs provides an impressive agent platform with top-tier voice quality, I chose **Vapi Agent Builder** after testing both because Vapi offers a more flexible, developer-centric orchestration layer that gives me explicit control over STT/LLM/TTS selection, integration with external systems, and structured conversation flows that align with real-world customer support requirements.
+This prototype demonstrates a **production-ready voice assistant** with:
+- Best-in-class latency (~665ms) and cost efficiency (~$0.11/min)
+- Reliable LLM inference with OpenAI GPT-4o Mini
+- High-quality voice with ElevenLabs Flash v2.5
+- Fast transcription with Deepgram
+
+The architecture prioritizes **reliability and quality** while maintaining excellent performance, with clear paths for further optimization through speech-to-speech models or custom LiveKit-based pipelines.
