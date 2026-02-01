@@ -136,6 +136,147 @@
             font-weight: 700;
         }
 
+        /* Top Right Button */
+        .top-right-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 998;
+        }
+        .qa-button {
+            background: linear-gradient(135deg, #e17055 0%, #fdcb6e 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(225, 112, 85, 0.4);
+            transition: all 0.3s ease;
+        }
+        .qa-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(225, 112, 85, 0.5);
+        }
+        .qa-button span:first-child {
+            font-size: 1.1rem;
+        }
+
+        /* Q&A Modal Styles */
+        .qa-modal {
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .qa-content {
+            padding: 10px;
+        }
+        .qa-section {
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 3px solid #00d4aa;
+        }
+        .qa-section.highlight {
+            border-left-color: #e17055;
+        }
+        .qa-section h3 {
+            color: #00d4aa;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .qa-section.highlight h3 {
+            color: #e17055;
+        }
+        .qa-section h4 {
+            color: #fff;
+            font-size: 0.95rem;
+            margin: 15px 0 10px 0;
+        }
+        .qa-section p {
+            color: #bbb;
+            line-height: 1.7;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .qa-section ul {
+            color: #bbb;
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        .qa-section li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .qa-section strong {
+            color: #fff;
+        }
+        .qa-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .qa-tag.stt { background: rgba(52,152,219,0.2); color: #3498db; }
+        .qa-tag.tts { background: rgba(155,89,182,0.2); color: #9b59b6; }
+        .qa-tag.llm { background: rgba(0,212,170,0.2); color: #00d4aa; }
+        .qa-tag.platform { background: rgba(225,112,85,0.2); color: #e17055; }
+        .qa-summary {
+            background: rgba(0,212,170,0.1);
+            border: 1px solid rgba(0,212,170,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .qa-summary p {
+            color: #00d4aa;
+            font-style: italic;
+            margin: 0;
+        }
+        .qa-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .qa-tab {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .qa-tab:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .qa-tab.active {
+            background: rgba(225,112,85,0.2);
+            border-color: #e17055;
+            color: #e17055;
+        }
+        .qa-panel {
+            display: none;
+        }
+        .qa-panel.active {
+            display: block;
+        }
+
         /* Flowchart Modal Styles */
         .flowchart-modal {
             max-width: 950px;
@@ -399,13 +540,20 @@
     </style>
 </head>
 <body>
-    <!-- Top Buttons -->
+    <!-- Top Left Buttons -->
     <div class="top-buttons">
         <button class="info-button" onclick="openModal('infoModal')">
             <span>?</span> What can it do?
         </button>
         <button class="flow-button" onclick="openModal('flowModal')">
             <span>&#8644;</span> User Flow
+        </button>
+    </div>
+
+    <!-- Top Right Button -->
+    <div class="top-right-buttons">
+        <button class="qa-button" onclick="openModal('qaModal')">
+            <span>&#128218;</span> Assignment Q&A
         </button>
     </div>
 
@@ -909,6 +1057,117 @@
         </div>
     </div>
 
+    <!-- Assignment Q&A Modal -->
+    <div class="modal" id="qaModal">
+        <div class="modal-content qa-modal">
+            <div class="modal-header">
+                <h2>Assignment Questions & Answers</h2>
+                <button class="modal-close" onclick="closeModal('qaModal')">&times;</button>
+            </div>
+            <div class="qa-content">
+                <!-- Tabs -->
+                <div class="qa-tabs">
+                    <button class="qa-tab active" onclick="showQATab('platform')">Platform Choice</button>
+                    <button class="qa-tab" onclick="showQATab('stack')">Tech Stack</button>
+                    <button class="qa-tab" onclick="showQATab('design')">Design Decisions</button>
+                </div>
+
+                <!-- Platform Choice Panel -->
+                <div class="qa-panel active" id="qa-platform">
+                    <div class="qa-section highlight">
+                        <h3>Why Vapi over ElevenLabs Agent Builder?</h3>
+                        <p>I tested both Vapi Agents and ElevenLabs Agents for this use case. While ElevenLabs provides an impressive all-in-one agent platform with high-quality voices and strong conversational controls, I chose Vapi due to <strong>architecture clarity, control, and reliability</strong> for production-style voice workflows.</p>
+
+                        <h4>1. Better Control Over the Voice Pipeline</h4>
+                        <p>With Vapi, the voice stack is explicitly separated: STT → LLM → TTS → Tooling → Escalation. This made it easier to tune latency at each stage, swap providers independently, and reason about failures and fallbacks.</p>
+
+                        <h4>2. Stronger Intent Handling & Escalation Logic</h4>
+                        <p>This use case requires clear intent detection, predictable conversation flow, and safe escalation when the agent is unsure. Vapi's agent builder makes intent routing, tool calls, and escalation paths more explicit.</p>
+
+                        <h4>3. More Predictable Real-time Behavior</h4>
+                        <p>In testing, Vapi showed more consistent turn-taking, interruptions and barge-in handling were more predictable, and latency felt more stable across longer conversations.</p>
+
+                        <h4>4. Easier Debugging & Observability</h4>
+                        <p>Vapi provides clearer event-level visibility (user transcript, agent response, interruptions), failure points, and LLM fallback behavior.</p>
+
+                        <div class="qa-summary">
+                            <p><strong>Summary:</strong> Although ElevenLabs provides a powerful agent platform with excellent voice quality, I chose Vapi because it offers clearer control over intent handling, escalation logic, and the end-to-end voice pipeline—making it a better fit for production-style customer support agents.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tech Stack Panel -->
+                <div class="qa-panel" id="qa-stack">
+                    <div class="qa-section">
+                        <h3><span class="qa-tag stt">STT</span> Speech-to-Text: Deepgram</h3>
+                        <p>Deepgram was selected as the primary STT provider due to its <strong>low streaming latency</strong> and strong performance in real-time conversational systems. It consistently provides sub-second partial transcripts, enabling natural back-and-forth interactions.</p>
+                        <h4>Trade-offs:</h4>
+                        <ul>
+                            <li><strong>Speechmatics</strong> was also evaluated and is preferred for noisy environments and multilingual/code-switching use cases (e.g., mixed English-Tamil conversations)</li>
+                            <li>For production systems serving diverse languages and accents, Speechmatics would be the preferred choice</li>
+                            <li>For this low-latency, English-focused use case, Deepgram provides the best overall trade-off</li>
+                        </ul>
+                    </div>
+
+                    <div class="qa-section">
+                        <h3><span class="qa-tag tts">TTS</span> Text-to-Speech: ElevenLabs Flash v2.5</h3>
+                        <p>ElevenLabs was selected for TTS due to its <strong>high-quality, natural-sounding voices</strong> and low-latency performance. The Eleven Flash v2.5 model was chosen for its ~75ms audio generation latency.</p>
+                        <h4>Key Considerations:</h4>
+                        <ul>
+                            <li>While relatively more expensive, cost optimization was not the primary focus</li>
+                            <li>Latency and voice quality were prioritized as they significantly improve perceived responsiveness, trust, and engagement</li>
+                            <li>Eleven Turbo v2.5 could be considered for richer voice quality if needed</li>
+                        </ul>
+                    </div>
+
+                    <div class="qa-section">
+                        <h3><span class="qa-tag llm">LLM</span> Language Model: Groq GPT OSS 20B</h3>
+                        <p>Groq-hosted GPT OSS 20B was selected due to its <strong>very low inference latency (~280ms)</strong> and cost efficiency. Groq models are highly optimized for fast inference, making them well-suited for real-time voice interactions.</p>
+                        <h4>Scaling Options:</h4>
+                        <ul>
+                            <li>For simple customer support flows, the 20B model provides sufficient language understanding</li>
+                            <li>For more complex tasks or advanced reasoning, GPT OSS 120B could be used while still maintaining low latency on Groq infrastructure</li>
+                            <li>OpenAI GPT-4o Mini was also considered but Groq offers better latency for this use case</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Design Decisions Panel -->
+                <div class="qa-panel" id="qa-design">
+                    <div class="qa-section">
+                        <h3>Why These Specific Use Cases?</h3>
+                        <p>The goal was to demonstrate high-quality automation for <strong>common, well-scoped support requests</strong>. Internet troubleshooting and bill payment represent two of the most frequent and structurally different customer intents.</p>
+                        <ul>
+                            <li><strong>Internet Issues:</strong> Requires real-time data lookup (outages), conditional logic (troubleshooting vs. escalation), and follow-up actions (SMS notifications)</li>
+                            <li><strong>Bill Payment:</strong> Requires account verification, secure data handling, and multi-channel delivery (SMS/Email)</li>
+                            <li><strong>Escalation:</strong> More complex or sensitive flows are intentionally routed to human agents</li>
+                        </ul>
+                    </div>
+
+                    <div class="qa-section">
+                        <h3>Why No Query Tools?</h3>
+                        <p>For this prototype, I <strong>intentionally avoided query tools</strong> to keep the system simple and low-latency. The assistant uses predefined tool calls with structured inputs/outputs.</p>
+                        <p>In a production system with highly dynamic data or complex account-level queries, query tools would be considered for controlled information retrieval.</p>
+                    </div>
+
+                    <div class="qa-section">
+                        <h3>Reusable Prompt Patterns</h3>
+                        <p>The system prompt uses <strong>reusable confirmation processes</strong> to ensure consistency:</p>
+                        <ul>
+                            <li><strong>[Email Confirmation Process]:</strong> Letter-by-letter spelling confirmation</li>
+                            <li><strong>[Phone Confirmation Process]:</strong> Digit-by-digit number confirmation</li>
+                            <li><strong>Tool Failure Handling:</strong> Retry once, then graceful fallback with ticket creation</li>
+                            <li><strong>Time-based Greetings/Closings:</strong> Dynamic based on time of day</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn" onclick="closeModal('qaModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Vapi Voice Assistant Button -->
     <button id="vapiButton" class="vapi-button" onclick="toggleVapiCall()">
         <span id="vapiIcon">📞</span>
@@ -959,6 +1218,17 @@
             // Add active to clicked tab and corresponding content
             event.target.classList.add('active');
             document.getElementById('flow-' + tabName).classList.add('active');
+        }
+
+        // Q&A tab switching
+        window.showQATab = function(tabName) {
+            // Remove active from all tabs and panels
+            document.querySelectorAll('.qa-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.qa-panel').forEach(panel => panel.classList.remove('active'));
+
+            // Add active to clicked tab and corresponding panel
+            event.target.classList.add('active');
+            document.getElementById('qa-' + tabName).classList.add('active');
         }
     </script>
     <script type="module" src="/main.js"></script>
