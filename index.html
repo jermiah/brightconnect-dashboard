@@ -579,12 +579,90 @@
             font-size: 0.85rem;
         }
 
+        /* Feature Highlight Styles */
+        .feature-highlight {
+            background: linear-gradient(135deg, rgba(108,92,231,0.1) 0%, rgba(0,212,170,0.1) 100%);
+            border: 1px solid rgba(108,92,231,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .feature-highlight h3 {
+            color: #a29bfe;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-highlight h3 span {
+            font-size: 1.2rem;
+        }
+        .greeting-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .greeting-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .greeting-time {
+            color: #00d4aa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .greeting-text {
+            color: #ddd;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        .night-highlight {
+            background: linear-gradient(135deg, rgba(155,89,182,0.15) 0%, rgba(108,92,231,0.15) 100%);
+            border: 1px solid rgba(155,89,182,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .night-highlight h3 {
+            color: #9b59b6;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .night-highlight p {
+            color: #bbb;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .night-highlight ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #bbb;
+        }
+        .night-highlight li {
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .night-highlight strong {
+            color: #9b59b6;
+        }
+
         @media (max-width: 768px) {
             .stats { grid-template-columns: repeat(2, 1fr); }
             .dashboard { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
             .top-buttons { flex-direction: column; gap: 8px; }
             .info-button, .flow-button { font-size: 0.8rem; padding: 10px 15px; }
+            .greeting-grid { grid-template-columns: 1fr; }
             .flow-tabs { gap: 3px; }
             .flow-tab { padding: 8px 12px; font-size: 0.75rem; }
             .flow-branch { flex-direction: column; gap: 20px; }
@@ -856,6 +934,41 @@
             </div>
             <div class="info-content">
                 <p class="info-intro">Click the <strong>"Call Assistant"</strong> button to speak with our AI-powered voice assistant. Here's what it can help you with:</p>
+
+                <!-- Time-based Greetings -->
+                <div class="feature-highlight">
+                    <h3><span>&#128337;</span> Time-Aware Greetings</h3>
+                    <div class="greeting-grid">
+                        <div class="greeting-item">
+                            <div class="greeting-time">Morning (5am - 12pm)</div>
+                            <div class="greeting-text">"Good morning! Thanks for calling BrightConnect..."</div>
+                        </div>
+                        <div class="greeting-item">
+                            <div class="greeting-time">Afternoon (12pm - 5pm)</div>
+                            <div class="greeting-text">"Good afternoon! Thanks for calling BrightConnect..."</div>
+                        </div>
+                        <div class="greeting-item">
+                            <div class="greeting-time">Evening (5pm - 9pm)</div>
+                            <div class="greeting-text">"Good evening! Thanks for calling BrightConnect..."</div>
+                        </div>
+                        <div class="greeting-item">
+                            <div class="greeting-time">Night (9pm - 5am)</div>
+                            <div class="greeting-text">"Hey there! I know it's late..."</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Night-time Emotional Touch Points -->
+                <div class="night-highlight">
+                    <h3><span>&#127769;</span> Late-Night Empathy Mode</h3>
+                    <p>When customers call during late hours (9pm - 5am), Jeremiah understands that something important must be going on. The assistant adapts its approach:</p>
+                    <ul>
+                        <li><strong>Acknowledges the late hour:</strong> "I know it's late, and if you're calling at this hour, it must be something important."</li>
+                        <li><strong>Extra patience and empathy:</strong> "I can hear this is important. Let's get it sorted together."</li>
+                        <li><strong>Calming presence:</strong> Slower pace, warmer tone, more reassurance</li>
+                        <li><strong>Time-appropriate closing:</strong> "Take care and have a good night!"</li>
+                    </ul>
+                </div>
 
                 <div class="use-case">
                     <div class="use-case-header">
